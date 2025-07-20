@@ -1,0 +1,124 @@
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Controle - Bot WhatsApp</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #eae6df;
+      margin: 0;
+    }
+    header {
+      background: #075e54;
+      color: white;
+      padding: 1rem;
+      font-size: 1.5rem;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      padding: 1rem;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      margin: 0.5rem 0;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .info {
+      flex-grow: 1;
+    }
+    .info strong {
+      display: block;
+      font-size: 1.1rem;
+    }
+    .status {
+      font-size: 0.9rem;
+      margin-top: 0.3rem;
+    }
+    .actions button {
+      margin-left: 0.5rem;
+      padding: 0.4rem 0.7rem;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    .on {
+      background-color: #4caf50;
+    }
+    .off {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <header>Painel de Controle do Bot WhatsApp</header>
+  <div class="container" id="contatos"></div>
+
+  <script>
+    const SHEET_URL = 'https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48';
+    const N8N_WEBHOOK_URL = 'https://SEU_WEBHOOK_N8N_HERE';
+
+    async function carregarContatos() {
+      const res = await fetch(SHEET_URL);
+      const dados = await res.json();
+      const container = document.getElementById('contatos');
+      container.innerHTML = '';
+
+      dados.forEach(contato => {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.innerHTML = `
+          <strong>${contato.nome} (${contato.numero})</strong>
+          <span>${contato.cidade}</span>
+          <div class="status">Bot: <b>${contato.modo.toUpperCase()}</b></div>
+        `;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const btnOn = document.createElement('button');
+        btnOn.className = 'on';
+        btnOn.innerText = 'Ativar';
+        btnOn.onclick = () => atualizarModo(contato.numero, 'on');
+
+        const btnOff = document.createElement('button');
+        btnOff.className = 'off';
+        btnOff.innerText = 'Desligar';
+        btnOff.onclick = () => atualizarModo(contato.numero, 'off');
+
+        actions.appendChild(btnOn);
+        actions.appendChild(btnOff);
+
+        card.appendChild(info);
+        card.appendChild(actions);
+
+        container.appendChild(card);
+      });
+    }
+
+    async function atualizarModo(numero, modo) {
+      await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero, modo })
+      });
+      alert(`Bot ${modo.toUpperCase()} para ${numero}`);
+      carregarContatos();
+    }
+
+    carregarContatos();
+  </script>
+</body>
+</html>
