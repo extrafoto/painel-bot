@@ -2,43 +2,71 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Painel Bot WhatsApp</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    .barra-topo {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 8px;
+    }
+    .topo-esquerda {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .topo-centro {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .grafico-mini {
+      width: 350px;
+      height: 60px;
+      margin-left: 12px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 4px 6px;
+    }
+    @media (max-width: 1000px) {
+      .barra-topo { flex-direction: column; align-items: flex-start; }
+      .grafico-mini { width: 100vw; min-width: 180px; max-width: 99vw; }
+    }
+  </style>
 </head>
 <body>
-  <header>
-    <div class="barra-topo">
-      <strong>Última Atualização:</strong> <span id="hora-atual">--:--</span>
+  <div class="barra-topo">
+    <div class="topo-esquerda">
+      <span id="ultima-atualizacao">
+        <strong>Última Atualização:</strong> <span id="hora-atual">--:--</span>
+      </span>
+      <span>
+        <strong>Total:</strong> <span id="total-contatos">0</span> &nbsp;
+        <strong>Bot Ativos:</strong> <span id="bots-ativos">0</span>
+      </span>
     </div>
-  </header>
-
-  <main>
-    <div class="painel-container">
-      <div class="barra-controle">
-        <input type="text" id="busca" placeholder="🔍 Buscar por nome ou número..." />
-        <select id="filtro-cidade"></select>
-        <button id="btn-recarregar">🔄</button>
-        <button id="btn-exportar">Exportar CSV</button>
+    <div class="topo-centro">
+      <input id="busca" type="text" placeholder="🔍 Buscar por nome ou número..." />
+      <button id="btn-recarregar" title="Recarregar">🔄</button>
+      <select id="filtro-cidade"></select>
+      <div class="grafico-mini">
+        <canvas id="grafico-cidades"></canvas>
       </div>
-
-      <div class="filtros">
-        <button class="filtro ativo" data-filtro="todos">🗂️ Todos</button>
-        <button class="filtro" data-filtro="bot">✅ Bot Ativo</button>
-        <button class="filtro" data-filtro="humano">❌ Bot Desligado</button>
-      </div>
-
-      <div class="resumo">
-        <span>Total: <span id="total-contatos">0</span></span>
-        <span>Bot Ativos: <span id="bots-ativos">0</span></span>
-      </div>
-
-      <div id="painel" class="grid"></div>
-
-      <canvas id="grafico-cidades" style="margin-top: 40px; max-width: 100%;"></canvas>
     </div>
-  </main>
+  </div>
 
-  <script src="js/app.js"></script>
+  <div class="barra-controle">
+    <button class="filtro ativo" data-filtro="todos">🗂️ Todos</button>
+    <button class="filtro" data-filtro="bot">✅ Bot Ativo</button>
+    <button class="filtro" data-filtro="humano">❌ Bot Desligado</button>
+  </div>
+
+  <div class="grid" id="painel"></div>
+  <script src="app.js"></script>
 </body>
 </html>
