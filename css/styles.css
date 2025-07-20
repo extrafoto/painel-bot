@@ -1,104 +1,135 @@
-const SHEET_URL = "https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48";
 
-let contatosGlobais = [];
-
-async function carregarContatos() {
-  try {
-    const res = await fetch(SHEET_URL);
-    const dados = await res.json();
-    contatosGlobais = dados;
-    atualizarDashboard(dados);
-  } catch (error) {
-    console.error("Erro ao carregar dados:", error);
-  }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 0;
 }
 
-function atualizarDashboard(contatos) {
-  const painel = document.getElementById("painel");
-  const totalContatos = document.getElementById("total-contatos");
-  const botsAtivos = document.getElementById("bots-ativos");
-  const horaAtual = document.getElementById("hora-atual");
-
-  painel.innerHTML = "";
-
-  const filtroAtivo = document.querySelector(".filtros .ativo").dataset.filtro;
-  const busca = document.getElementById("busca").value.toLowerCase();
-
-  const filtrados = contatos.filter(c => {
-    const emBusca = (c.Nome + c.numero).toLowerCase().includes(busca);
-    const emFiltro = filtroAtivo === "todos" || c.modo === filtroAtivo;
-    return emBusca && emFiltro;
-  });
-
-  filtrados.sort((a, b) => {
-    const dataA = new Date(a.timestamp_ultima || 0);
-    const dataB = new Date(b.timestamp_ultima || 0);
-    return dataB - dataA; // Ordem decrescente
-  });
-
-  filtrados.forEach(c => {
-    const card = document.createElement("div");
-    card.className = "card";
-
-    const nome = c.Nome || "Sem Nome";
-    const numero = c.numero || "Sem número";
-    const modo = c.modo === "bot" ? "bot" : "humano";
-    const data = c.timestamp_ultima || "Nunca";
-    const mensagem = c.mensagem_ultima || "Sem mensagem";
-    const cidade = c.Cidade || "Indefinida";
-
-    card.innerHTML = `
-      <h3>${nome}</h3>
-      <small>📱 ${numero}</small><br>
-      <div><span>🗺️ ${cidade}</span></div>
-      <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
-      <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
-      <div><strong>Modo Atual:</strong> ${modo}</div>
-      <div><strong>Última Atualização:</strong> ${data}</div>
-      <button class="${modo === "bot" ? "desligar" : "ligar"}" onclick="alternarModo('${numero}', '${modo === "bot" ? "humano" : "bot"}')">
-        ${modo === "bot" ? "Desligar Bot" : "Ligar Bot"}
-      </button>
-    `;
-
-    painel.appendChild(card);
-  });
-
-  totalContatos.textContent = contatos.length;
-  botsAtivos.textContent = contatos.filter(c => c.modo === "bot").length;
-  horaAtual.textContent = new Date().toLocaleTimeString("pt-BR");
+header {
+  background: #fff;
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
 }
 
-async function alternarModo(numero, novoModo) {
-  try {
-    const patchUrl = `${SHEET_URL}/numero/${numero}`;
-    await fetch(patchUrl, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ modo: novoModo })
-    });
-
-    await carregarContatos();
-  } catch (error) {
-    console.error("Erro ao alternar modo:", error);
-  }
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-document.getElementById("busca").addEventListener("input", () => atualizarDashboard(contatosGlobais));
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  font-weight: bold;
+}
 
-document.querySelectorAll(".filtro").forEach(btn => {
-  btn.addEventListener("click", () => {
-    document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
-    btn.classList.add("ativo");
-    atualizarDashboard(contatosGlobais);
-  });
-});
+h1 {
+  margin: 0;
+}
 
-document.getElementById("btn-recarregar").addEventListener("click", () => carregarContatos());
+main {
+  padding: 20px;
+}
 
-carregarContatos();
+.controls {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-bottom: 20px;
+}
 
-// Atualização automática a cada 15 minutos
-setInterval(() => {
-  console.log("Atualizando automaticamente...");
-  carregarContatos();
-}, 15 * 60 * 1000);
+.controls input {
+  flex-grow: 1;
+  max-width: 400px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.filtros {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.filtros button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 20px;
+  background: #eee;
+  cursor: pointer;
+}
+
+.filtros button.ativo {
+  background: #28a745;
+  color: white;
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.card small {
+  display: block;
+  margin: 5px 0 15px;
+  color: gray;
+}
+
+.status {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.status.bot {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status.humano {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.card button {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.card button.desligar {
+  background: #dc3545;
+  color: white;
+}
+
+.card button.ligar {
+  background: #28a745;
+  color: white;
+}
