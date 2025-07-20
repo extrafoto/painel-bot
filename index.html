@@ -8,16 +8,34 @@
 </head>
 <body>
   <header>
-    <div class="header-left">
-      <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png"/>
-      <h1>Painel Bot WhatsApp</h1>
-    </div>
-    <div class="header-right">
-      <div>Total de Contatos: <span id="total-contatos">0</span></div>
-      <div>Bots Ativos: <span id="bots-ativos">0</span></div>
-      <div>Última Atualização: <span id="hora-atual">--:--:--</span></div>
-      <button id="btn-recarregar">🔄</button>
-    </div>
+   <div class="barra-topo">
+  <div class="ultima-atualizacao">
+    <strong>Última Atualização:</strong> <span id="hora-atual">--:--</span>
+  </div>
+</div>
+
+<div class="barra-controle">
+  <input type="text" id="busca" placeholder="Buscar por nome ou número..." />
+  <select id="filtro-cidade"></select>
+  <button id="btn-recarregar">🔄</button>
+  <button id="btn-exportar">Exportar CSV</button>
+</div>
+
+<div class="filtros">
+  <button class="filtro ativo" data-filtro="todos">Todos</button>
+  <button class="filtro" data-filtro="bot">Bot</button>
+  <button class="filtro" data-filtro="humano">Humano</button>
+</div>
+
+<div id="painel"></div>
+
+<div class="resumo">
+  <span>Total: <span id="total-contatos">0</span></span>
+  <span>Bot Ativos: <span id="bots-ativos">0</span></span>
+</div>
+
+<canvas id="grafico-cidades" style="margin-top: 40px; max-width: 100%;"></canvas>
+
   </header>
 
   <main>
