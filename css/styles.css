@@ -1,107 +1,100 @@
-
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f5f6fa;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
   margin: 0;
-  padding: 0;
-}
-
-header {
-  background: #fff;
-  padding: 15px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  font-weight: bold;
-}
-
-h1 {
-  margin: 0;
-}
-
-main {
   padding: 20px;
 }
 
-.controls {
+.cabecalho {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.controls input {
-  flex-grow: 1;
-  max-width: 400px;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+.topbar {
+  font-size: 0.9em;
+  color: #555;
+  text-align: right;
+}
+
+.barra-busca {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.barra-busca input {
+  flex: 1;
+  padding: 8px;
+  font-size: 1em;
+  min-width: 220px;
+}
+
+.barra-busca button {
+  padding: 8px 12px;
+  font-size: 1em;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .filtros {
   display: flex;
   gap: 10px;
-  margin-top: 10px;
+  flex-wrap: wrap;
 }
 
-.filtros button {
-  padding: 8px 14px;
+.filtro {
+  background: #ddd;
   border: none;
-  border-radius: 20px;
-  background: #eee;
+  padding: 6px 12px;
   cursor: pointer;
+  border-radius: 4px;
 }
 
-.filtros button.ativo {
-  background: #28a745;
+.filtro.ativo {
+  background: #007bff;
   color: white;
 }
 
-.grid {
+.resumo {
   display: flex;
-  flex-wrap: wrap;
   gap: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.painel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 15px;
 }
 
 .card {
-  background: #fff;
+  background: white;
+  padding: 15px;
   border-radius: 8px;
-  padding: 20px;
-  width: 300px;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .card h3 {
-  margin: 0;
+  margin: 0 0 8px;
 }
 
-.card small {
-  display: block;
-  margin: 5px 0 15px;
-  color: gray;
+.card .mensagem {
+  font-size: 0.9em;
+  color: #444;
 }
 
 .status {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
   font-weight: bold;
-  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 5px 0;
 }
 
 .status.bot {
@@ -114,22 +107,31 @@ main {
   color: #721c24;
 }
 
-.card button {
-  width: 100%;
-  padding: 10px;
+button.ligar,
+button.desligar {
+  padding: 6px 10px;
   border: none;
-  border-radius: 6px;
-  font-weight: bold;
+  border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px;
-}
-
-.card button.desligar {
-  background: #dc3545;
   color: white;
+  font-weight: bold;
 }
 
-.card button.ligar {
+button.ligar {
   background: #28a745;
-  color: white;
+}
+
+button.desligar {
+  background: #dc3545;
+}
+
+@media (max-width: 600px) {
+  .resumo, .filtros, .barra-busca {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .topbar {
+    text-align: left;
+  }
 }
