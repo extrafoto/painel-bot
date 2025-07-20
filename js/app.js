@@ -30,11 +30,16 @@ function atualizarDashboard(contatos) {
     return emBusca && emFiltro;
   });
 
-  filtrados.sort((a, b) => {
-    const dataA = new Date(a.timestamp_ultima || 0);
-    const dataB = new Date(b.timestamp_ultima || 0);
-    return dataB - dataA; // Ordem decrescente
-  });
+ filtrados.sort((a, b) => {
+  const parseData = (str) => {
+    if (!str || str.toLowerCase() === "nunca") return new Date(0);
+    const [data, hora] = str.split(" ");
+    const [dia, mes, ano] = data.split("/");
+    return new Date(`${ano}-${mes}-${dia}T${hora || "00:00"}`);
+  };
+
+  return parseData(b.timestamp_ultima) - parseData(a.timestamp_ultima);
+});
 
   filtrados.forEach(c => {
     const card = document.createElement("div");
