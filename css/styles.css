@@ -1,4 +1,29 @@
 
+.barra-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  font-size: 0.95em;
+}
+
+.barra-controle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.barra-controle input,
+.barra-controle select {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px;
+}
+
+.barra-controle button {
+  padding: 8px 12px;
+}
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f5f6fa;
@@ -132,30 +157,5 @@ main {
 .card button.ligar {
   background: #28a745;
   color: white;
-}
-.barra-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 10px;
-  font-size: 0.95em;
-}
-
-.barra-controle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.barra-controle input,
-.barra-controle select {
-  flex: 1;
-  min-width: 180px;
-  padding: 8px;
-}
-
-.barra-controle button {
-  padding: 8px 12px;
 }
 
