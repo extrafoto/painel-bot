@@ -1,25 +1,38 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel Protegido</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel Bot WhatsApp</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <h2>🔒 Acesso Restrito</h2>
-      <input type="password" id="senha" placeholder="Digite a senha" />
-      <button id="btnEntrar">Entrar</button>
+  <header>
+    <div class="header-left">
+      <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png"/>
+      <h1>Painel Bot WhatsApp</h1>
     </div>
-  </div>
+    <div class="header-right">
+      <div>Total de Contatos: <span id="total-contatos">0</span></div>
+      <div>Bots Ativos: <span id="bots-ativos">0</span></div>
+      <div>Última Atualização: <span id="hora-atual">--:--:--</span></div>
+      <button id="btn-recarregar">🔄</button>
+    </div>
+  </header>
 
-  <div id="painel" style="display:none;">
-    <h1>✅ Acesso Liberado ao Painel</h1>
-    <p>Este é o conteúdo do painel.</p>
-  </div>
+  <main>
+    <div class="controls">
+      <input type="text" id="busca" placeholder="🔍 Buscar por nome ou número..." />
+      <div class="filtros">
+        <button class="filtro ativo" data-filtro="todos">🗂️ Todos</button>
+        <button class="filtro" data-filtro="bot">✅ Bot Ativo</button>
+        <button class="filtro" data-filtro="humano">❌ Bot Desligado</button>
+      </div>
+    </div>
+    <div id="painel" class="grid"></div>
+  </main>
 
-  <script src="js/login.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
