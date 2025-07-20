@@ -1,3 +1,13 @@
+function verificarSenha() {
+  const senha = document.getElementById("senha").value;
+  if (senha === "1234") {
+    document.getElementById("login").style.display = "none";
+    document.getElementById("painel").style.display = "block";
+    carregarContatos(); // sua função já existente
+  } else {
+    alert("Senha incorreta.");
+  }
+}
 
 const SHEET_URL = "https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48";
 
