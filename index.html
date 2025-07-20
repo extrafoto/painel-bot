@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel do Bot WhatsApp</title>
+  <title>Dashboard Interno - Bot WhatsApp</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
     .card {
-      background: white; padding: 15px; margin: 10px 0;
-      border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 600px;
     }
     button {
-      padding: 5px 10px;
-      background: #007bff;
+      padding: 6px 12px;
+      background: #28a745;
       color: white;
       border: none;
       border-radius: 4px;
@@ -21,10 +32,13 @@
     button.off {
       background: #dc3545;
     }
+    .info {
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>Painel de Controle do Bot WhatsApp</h1>
+  <h1>Dashboard do Bot WhatsApp</h1>
   <div id="painel"></div>
 
   <script>
@@ -36,19 +50,22 @@
 
       dados.forEach(contato => {
         const nome = contato.Nome || "Sem nome";
-        const numero = contato.numero || "Desconhecido";
+        const numero = contato.numero || "Sem número";
         const modo = contato.modo === "bot" ? "bot" : "humano";
         const novoModo = modo === "bot" ? "humano" : "bot";
+        const data = contato.timestamp_ultima || "Sem data";
 
         const div = document.createElement("div");
         div.className = "card";
         div.innerHTML = `
-          <strong>${nome}</strong><br>
-          Número: ${numero}<br>
-          Modo: <strong>${modo}</strong><br>
-          <button class="${modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${numero}', '${novoModo}')">
-            ${modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
-          </button>
+          <div class="info"><strong>Nome:</strong> ${nome}</div>
+          <div class="info"><strong>Telefone:</strong> ${numero}</div>
+          <div class="info"><strong>Data da Conversa:</strong> ${data}</div>
+          <div class="info">
+            <button class="${modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${numero}', '${novoModo}')">
+              ${modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
+            </button>
+          </div>
         `;
         painel.appendChild(div);
       });
@@ -61,21 +78,18 @@
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({
-            numero: numero,
-            modo: novoModo
-          })
+          body: JSON.stringify({ numero, modo: novoModo })
         });
 
         const data = await response.json();
         console.log("Resposta do webhook:", data);
-        await carregarContatos(); // atualiza após mudar
+        await carregarContatos();
       } catch (error) {
         console.error("Erro ao enviar para o webhook:", error);
       }
     }
 
-    carregarContatos(); // inicial
+    carregarContatos();
   </script>
 </body>
 </html>
