@@ -3,123 +3,66 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Controle - Bot WhatsApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel do Bot WhatsApp</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #eae6df;
-      margin: 0;
-    }
-    header {
-      background: #075e54;
-      color: white;
-      padding: 1rem;
-      font-size: 1.5rem;
-    }
-    .container {
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
-    }
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
     .card {
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      margin: 0.5rem 0;
-      padding: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: white; padding: 15px; margin: 10px 0;
+      border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);
     }
-    .info {
-      flex-grow: 1;
-    }
-    .info strong {
-      display: block;
-      font-size: 1.1rem;
-    }
-    .status {
-      font-size: 0.9rem;
-      margin-top: 0.3rem;
-    }
-    .actions button {
-      margin-left: 0.5rem;
-      padding: 0.4rem 0.7rem;
+    button {
+      padding: 5px 10px;
+      background: #007bff;
+      color: white;
       border: none;
       border-radius: 4px;
-      color: white;
       cursor: pointer;
     }
-    .on {
-      background-color: #4caf50;
-    }
-    .off {
-      background-color: #f44336;
+    button.off {
+      background: #dc3545;
     }
   </style>
 </head>
 <body>
-  <header>Painel de Controle do Bot WhatsApp</header>
-  <div class="container" id="contatos"></div>
+  <h1>Painel de Controle do Bot WhatsApp</h1>
+  <div id="painel"></div>
 
   <script>
-    const SHEET_URL = 'https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48';
-    const N8N_WEBHOOK_URL = 'https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28';
-
     async function carregarContatos() {
-      const res = await fetch(SHEET_URL);
+      const res = await fetch("https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48");
       const dados = await res.json();
-      const container = document.getElementById('contatos');
-      container.innerHTML = '';
+      const painel = document.getElementById("painel");
+      painel.innerHTML = "";
 
       dados.forEach(contato => {
-        const card = document.createElement('div');
-        card.className = 'card';
-
-        const info = document.createElement('div');
-        info.className = 'info';
-        info.innerHTML = `
-          <strong>${contato.nome} (${contato.numero})</strong>
-          <span>${contato.cidade}</span>
-          <div class="status">Bot: <b>${contato.modo.toUpperCase()}</b></div>
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <strong>${contato.nome || "Sem nome"}</strong><br>
+          Número: ${contato.numero}<br>
+          Modo: <strong>${contato.modo}</strong><br>
+          <button class="${contato.modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${contato.numero}', '${contato.modo}')">
+            ${contato.modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
+          </button>
         `;
-
-        const actions = document.createElement('div');
-        actions.className = 'actions';
-
-        const btnOn = document.createElement('button');
-        btnOn.className = 'on';
-        btnOn.innerText = 'Ativar';
-        btnOn.onclick = () => atualizarModo(contato.numero, 'on');
-
-        const btnOff = document.createElement('button');
-        btnOff.className = 'off';
-        btnOff.innerText = 'Desligar';
-        btnOff.onclick = () => atualizarModo(contato.numero, 'off');
-
-        actions.appendChild(btnOn);
-        actions.appendChild(btnOff);
-
-        card.appendChild(info);
-        card.appendChild(actions);
-
-        container.appendChild(card);
+        painel.appendChild(div);
       });
     }
 
-await fetch("https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28", {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ numero, modo })
-});
+    async function alternarModo(numero, modoAtual) {
+      const novoModo = modoAtual === "bot" ? "humano" : "bot";
 
+      await fetch("https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero, modo: novoModo })
+      });
 
-      alert(`Bot ${modo.toUpperCase()} para ${numero}`);
-      carregarContatos();
+      carregarContatos(); // atualiza após mudar
     }
 
-    carregarContatos();
+    carregarContatos(); // inicial
   </script>
 </body>
 </html>
