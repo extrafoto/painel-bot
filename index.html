@@ -28,31 +28,32 @@
   <div id="painel"></div>
 
   <script>
-    async function carregarContatos() {
-      const res = await fetch("https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48");
-      const dados = await res.json();
-      const painel = document.getElementById("painel");
-      painel.innerHTML = "";
+ async function carregarContatos() {
+  const res = await fetch("https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48");
+  const dados = await res.json();
+  const painel = document.getElementById("painel");
+  painel.innerHTML = "";
 
-      dados.forEach(contato => {
-        const div = document.createElement("div");
-        div.className = "card";
-        const nome = contato.nome || "Sem nome";
-        const numero = contato.numero || "Desconhecido";
-        const modo = contato.modo === "bot" ? "bot" : "humano";
-        const novoModo = modo === "bot" ? "humano" : "bot";
+  dados.forEach(contato => {
+    const nome = contato.Nome || "Sem nome";
+    const numero = contato.numero || "Desconhecido";
+    const modo = contato.modo === "bot" ? "bot" : "humano";
+    const novoModo = modo === "bot" ? "humano" : "bot";
 
-        div.innerHTML = `
-          <strong>${nome}</strong><br>
-          Número: ${numero}<br>
-          Modo: <strong>${modo}</strong><br>
-          <button class="${modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${numero}', '${novoModo}')">
-            ${modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
-          </button>
-        `;
-        painel.appendChild(div);
-      });
-    }
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <strong>${nome}</strong><br>
+      Número: ${numero}<br>
+      Modo: <strong>${modo}</strong><br>
+      <button class="${modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${numero}', '${novoModo}')">
+        ${modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
+      </button>
+    `;
+    painel.appendChild(div);
+  });
+}
+
 
     async function alternarModo(numero, novoModo) {
       try {
