@@ -108,12 +108,13 @@
       });
     }
 
-    async function atualizarModo(numero, modo) {
-      await fetch(N8N_WEBHOOK_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero, modo })
-      });
+await fetch("https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28", {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ numero, modo })
+});
+
+
       alert(`Bot ${modo.toUpperCase()} para ${numero}`);
       carregarContatos();
     }
