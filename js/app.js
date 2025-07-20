@@ -22,7 +22,7 @@ function atualizarDashboard(contatos) {
 
   painel.innerHTML = "";
 
-  const filtroAtivo = document.querySelector(".filtros .ativo").dataset.filtro;
+  const filtroAtivo = document.querySelector(".filtros .ativo")?.dataset.filtro || "todos";
   const busca = document.getElementById("busca").value.toLowerCase();
   const cidadeSelecionada = document.getElementById("filtro-cidade").value;
 
@@ -126,31 +126,7 @@ function atualizarGraficoCidades(contatos) {
   });
 }
 
-function exportarCSV(contatos) {
-  const cidadeSelecionada = document.getElementById("filtro-cidade").value;
-  const filtrados = contatos.filter(c => !cidadeSelecionada || c.Cidade === cidadeSelecionada);
-
-  if (filtrados.length === 0) {
-    alert("Nenhum contato para exportar.");
-    return;
-  }
-
-  const cabecalho = ["Nome", "Número", "Cidade", "Modo", "Mensagem", "Data"];
-  const linhas = filtrados.map(c =>
-    [c.Nome, c.numero, c.Cidade, c.modo, c.mensagem_ultima, c.timestamp_ultima]
-      .map(val => `"${(val || "").replace(/"/g, '""')}"`).join(",")
-  );
-
-  const csvContent = [cabecalho.join(","), ...linhas].join("\n");
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(blob);
-  link.setAttribute("download", `contatos-${cidadeSelecionada || "todas"}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
+// Eventos
 document.getElementById("busca").addEventListener("input", () => atualizarDashboard(contatosGlobais));
 document.querySelectorAll(".filtro").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -160,8 +136,8 @@ document.querySelectorAll(".filtro").forEach(btn => {
   });
 });
 document.getElementById("btn-recarregar").addEventListener("click", () => carregarContatos());
-document.getElementById("btn-exportar").addEventListener("click", () => exportarCSV(contatosGlobais));
 document.getElementById("filtro-cidade").addEventListener("change", () => atualizarDashboard(contatosGlobais));
 
+// Inicialização
 carregarContatos();
 setInterval(() => carregarContatos(), 15 * 60 * 1000);
