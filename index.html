@@ -1,83 +1,104 @@
-
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel do Bot WhatsApp</title>
+  <title>Painel de Controle do Bot</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
-    .card {
-      background: white; padding: 15px; margin: 10px 0;
-      border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    body {
+      font-family: Arial, sans-serif;
+      background: #e5ddd5;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #075e54;
+    }
+    .contact {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #ccc;
+    }
+    .numero {
+      font-weight: bold;
+    }
+    .botoes {
+      display: flex;
+      gap: 8px;
     }
     button {
-      padding: 5px 10px;
-      background: #007bff;
-      color: white;
+      padding: 6px 12px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      color: white;
     }
-    button.off {
-      background: #dc3545;
+    .ligado {
+      background-color: #34b7f1;
+    }
+    .desligado {
+      background-color: #f44336;
     }
   </style>
 </head>
 <body>
-  <h1>Painel de Controle do Bot WhatsApp</h1>
-  <div id="painel"></div>
+  <div class="container">
+    <h2>💬 Painel de Controle do Bot</h2>
+
+    <!-- Contato 1 -->
+    <div class="contact">
+      <div class="numero">Paulo – 5521993916978</div>
+      <div class="botoes">
+        <button class="ligado" onclick="setModo('bot', '5521993916978')">🤖 Bot Ligado</button>
+        <button class="desligado" onclick="setModo('humano', '5521993916978')">🙋 Bot Desligado</button>
+      </div>
+    </div>
+
+    <!-- Exemplo: Adicione mais blocos de contato aqui -->
+    <!--
+    <div class="contact">
+      <div class="numero">Contato XYZ – 55219XXXXXXX</div>
+      <div class="botoes">
+        <button class="ligado" onclick="setModo('bot', '55219XXXXXXX')">🤖 Bot Ligado</button>
+        <button class="desligado" onclick="setModo('humano', '55219XXXXXXX')">🙋 Bot Desligado</button>
+      </div>
+    </div>
+    -->
+
+  </div>
 
   <script>
-    async function carregarContatos() {
-      const res = await fetch("https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48");
-      const dados = await res.json();
-      const painel = document.getElementById("painel");
-      painel.innerHTML = "";
-
-      dados.forEach(contato => {
-        const div = document.createElement("div");
-        div.className = "card";
-        div.innerHTML = `
-          <strong>${contato.nome || "Sem nome"}</strong><br>
-          Número: ${contato.numero}<br>
-          Modo: <strong>${contato.modo}</strong><br>
-      <button onclick="setModo('bot', '5521999999999')">🤖 Bot Ligado</button>
-<button onclick="setModo('humano', '5521999999999')">🙋 Bot Desligado</button>
-
-<script>
-  function setModo(modo, numero) {
-    fetch('https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ numero, modo })
-    })
-    .then(res => res.ok ? alert('Modo atualizado com sucesso!') : alert('Erro ao atualizar modo.'))
-    .catch(err => console.error('Erro na requisição:', err));
-  }
-</script>
-
-        `;
-        painel.appendChild(div);
+    function setModo(modo, numero) {
+      fetch("https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ numero, modo })
+      })
+      .then(res => {
+        if (res.ok) {
+          alert(`Modo "${modo}" enviado com sucesso para ${numero}`);
+        } else {
+          alert('Erro ao atualizar. Verifique o console.');
+        }
+      })
+      .catch(err => {
+        console.error('Erro na requisição:', err);
+        alert('Erro ao enviar comando.');
       });
     }
-
-    async function alternarModo(numero, modoAtual) {
-      const novoModo = modoAtual === "bot" ? "humano" : "bot";
-
-    fetch('https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    numero: '5521999999999',
-    modo: 'bot' // ou 'humano'
-  })
-})
-
-      carregarContatos(); // atualiza após mudar
-    }
-
-    carregarContatos(); // inicial
   </script>
 </body>
 </html>
