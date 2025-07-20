@@ -30,16 +30,16 @@ function atualizarDashboard(contatos) {
     return emBusca && emFiltro;
   });
 
-  filtrados.sort((a, b) => {
-    const parseData = (str) => {
-      if (!str || str.toLowerCase() === "nunca") return new Date(0);
-      const [data, hora] = str.split(" ");
-      const [dia, mes, ano] = data.split("/");
-      return new Date(`${ano}-${mes}-${dia}T${hora || "00:00"}`);
-    };
+ filtrados.sort((a, b) => {
+  const parseData = (str) => {
+    if (!str || str.toLowerCase() === "nunca") return new Date(0);
+    const [data, hora] = str.split(" ");
+    const [dia, mes, ano] = data.split("/");
+    return new Date(`${ano}-${mes}-${dia}T${hora || "00:00"}`);
+  };
 
-    return parseData(b.timestamp_ultima) - parseData(a.timestamp_ultima);
-  });
+  return parseData(b.timestamp_ultima) - parseData(a.timestamp_ultima);
+});
 
   filtrados.forEach(c => {
     const card = document.createElement("div");
@@ -59,6 +59,7 @@ function atualizarDashboard(contatos) {
       <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
       <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
       <div><strong>Modo Atual:</strong> ${modo}</div>
+      <div><strong>Última Atualização:</strong> ${data}</div>
       <button class="${modo === "bot" ? "desligar" : "ligar"}" onclick="alternarModo('${numero}', '${modo === "bot" ? "humano" : "bot"}')">
         ${modo === "bot" ? "Desligar Bot" : "Ligar Bot"}
       </button>
@@ -69,13 +70,7 @@ function atualizarDashboard(contatos) {
 
   totalContatos.textContent = contatos.length;
   botsAtivos.textContent = contatos.filter(c => c.modo === "bot").length;
-  const agora = new Date();
-  const dia = String(agora.getDate()).padStart(2, '0');
-  const mes = String(agora.getMonth() + 1).padStart(2, '0');
-  const ano = agora.getFullYear();
-  const hora = String(agora.getHours()).padStart(2, '0');
-  const min = String(agora.getMinutes()).padStart(2, '0');
-  horaAtual.textContent = `${dia}/${mes}/${ano} ${hora}:${min}`;
+  horaAtual.textContent = new Date().toLocaleTimeString("pt-BR");
 }
 
 async function alternarModo(numero, novoModo) {
