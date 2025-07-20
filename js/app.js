@@ -46,6 +46,7 @@ function atualizarDashboard(contatos) {
       <small>📱 ${numero}</small><br>
       <small>🏙️ ${cidade}</small><br>
       <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
+<br>
       <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
       <div><strong>Modo Atual:</strong> ${modo}</div>
       <div><strong>Última Atualização:</strong> ${data}</div>
