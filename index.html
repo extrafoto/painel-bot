@@ -19,31 +19,53 @@
     const webhookUrl = 'https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28';
 
     async function carregarContatos() {
-      const res = await fetch(apiUrl);
-      const contatos = await res.json();
+      try {
+        const res = await fetch(apiUrl);
+        const contatos = await res.json();
 
-      const container = document.getElementById('contatos');
-      container.innerHTML = '';
+        const container = document.getElementById('contatos');
+        container.innerHTML = '';
 
-      contatos.forEach(contato => {
-        const card = document.createElement('div');
-        card.className = 'card p-3';
-        card.innerHTML = `
-          <h5>${contato.Nome} – ${contato.numero}</h5>
-          <div class="btn-group" role="group">
-            <button class="btn btn-sm btn-success" onclick="alterarModo('${contato.numero}', 'bot')">🤖 Bot Ligado</button>
-            <button class="btn btn-sm btn-danger" onclick="alterarModo('${contato.numero}', 'OFF')">🔇 Bot Desligado</button>
-          </div>
-        `;
-        container.appendChild(card);
-      });
+        contatos.forEach(contato => {
+          const card = document.createElement('div');
+          card.className = 'card p-3';
+          card.innerHTML = `
+            <h5>${contato.Nome} – ${contato.numero}</h5>
+            <div class="btn-group" role="group">
+              <button class="btn btn-sm btn-success" data-numero="${contato.numero}" data-modo="bot">🤖 Bot Ligado</button>
+              <button class="btn btn-sm btn-danger" data-numero="${contato.numero}" data-modo="OFF">🔇 Bot Desligado</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+        adicionarListeners();
+      } catch (error) {
+        console.error('Erro ao carregar contatos:', error);
+      }
     }
 
-    async function alterarModo(numero, modo) {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ numero, modo })
+    function adicionarListeners() {
+      const botoes = document.querySelectorAll('button[data-numero][data-modo]');
+      botoes.forEach(botao => {
+        botao.addEventListener('click', async () => {
+          const numero = botao.getAttribute('data-numero');
+          const modo = botao.getAttribute('data-modo');
+          try {
+            const resposta = await fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ numero, modo })
+            });
+            if (resposta.ok) {
+              alert(`Modo atualizado para ${modo.toUpperCase()} para o número ${numero}`);
+            } else {
+              alert('Erro ao atualizar o modo.');
+            }
+          } catch (erro) {
+            alert('Falha na requisição: ' + erro.message);
+          }
+        });
       });
     }
 
