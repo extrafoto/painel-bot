@@ -1,29 +1,3 @@
-
-.barra-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 10px;
-  font-size: 0.95em;
-}
-
-.barra-controle {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 10px 0;
-}
-
-.barra-controle input,
-.barra-controle select {
-  flex: 1;
-  min-width: 180px;
-  padding: 8px;
-}
-
-.barra-controle button {
-  padding: 8px 12px;
-}
 body {
   font-family: 'Segoe UI', sans-serif;
   background: #f5f6fa;
@@ -38,19 +12,7 @@ header {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #ddd;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 25px;
-  font-weight: bold;
+  flex-wrap: wrap;
 }
 
 h1 {
@@ -59,6 +21,35 @@ h1 {
 
 main {
   padding: 20px;
+}
+
+.barra-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 10px;
+  font-size: 0.95em;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.barra-controle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+  align-items: center;
+}
+
+.barra-controle input,
+.barra-controle select {
+  flex: 1;
+  min-width: 180px;
+  padding: 8px;
+}
+
+.barra-controle button {
+  padding: 8px 12px;
 }
 
 .controls {
@@ -79,6 +70,7 @@ main {
 
 .filtros {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-top: 10px;
 }
@@ -96,10 +88,19 @@ main {
   color: white;
 }
 
+.resumo {
+  margin-top: 10px;
+  font-weight: bold;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
 .grid {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+  justify-content: center;
 }
 
 .card {
@@ -159,3 +160,27 @@ main {
   color: white;
 }
 
+@media (max-width: 600px) {
+  .barra-topo,
+  .barra-controle,
+  .resumo,
+  .filtros {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .barra-controle input,
+  .barra-controle select,
+  .barra-controle button {
+    width: 100%;
+  }
+
+  .resumo {
+    gap: 10px;
+    text-align: center;
+  }
+
+  .card {
+    width: 100%;
+  }
+}
