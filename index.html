@@ -31,6 +31,30 @@
     </div>
     <div id="painel" class="grid"></div>
   </main>
+<div class="barra-controle">
+  <div class="ultima-atualizacao">
+    <span><strong>Última Atualização:</strong> <span id="hora-atual">--:--</span></span>
+  </div>
+  <input type="text" id="busca" placeholder="Buscar por nome ou número..." />
+  <select id="filtro-cidade"></select>
+  <button id="btn-recarregar">🔄</button>
+  <button id="btn-exportar">Exportar CSV</button>
+</div>
+
+<div class="filtros">
+  <button class="filtro ativo" data-filtro="todos">Todos</button>
+  <button class="filtro" data-filtro="bot">Bot</button>
+  <button class="filtro" data-filtro="humano">Humano</button>
+</div>
+
+<div id="painel"></div>
+
+<div class="resumo">
+  <span>Total: <span id="total-contatos">0</span></span>
+  <span>Bot Ativos: <span id="bots-ativos">0</span></span>
+</div>
+
+<canvas id="grafico-cidades" style="margin-top: 40px; max-width: 100%;"></canvas>
 
   <script src="js/app.js"></script>
 </body>
