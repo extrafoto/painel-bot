@@ -1,6 +1,6 @@
 const APIManager = {
   apiKey: "AIzaSyCr_GlRIXzldcsamu_qfxE5DO69HspfcRw",
-  spreadsheetId: "COLE_AQUI_SEU_SPREADSHEET_ID", // exemplo: 1aBcD123xYz
+  spreadsheetId: "1qDTH5FdDF2w6p76F5rOfxwmrKFY8_xS6IdVPnmpOa_k", // exemplo: 1aBcD123xYz
   sheetRange: "Sheet1!A1:H100", // ajuste conforme seu layout
 
   async getContacts() {
