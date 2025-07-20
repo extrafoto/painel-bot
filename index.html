@@ -3,38 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel de Controle do Bot</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Painel Bot WhatsApp</title>
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-
-  <!-- Cabeçalho com busca e filtros -->
-  <div class="cabecalho">
-    <div class="topbar">
-      <span><strong>Última Atualização:</strong> <span id="hora-atual">--:--</span></span>
+  <header>
+    <div class="header-left">
+      <img src="https://img.icons8.com/color/48/000000/whatsapp--v1.png"/>
+      <h1>Painel Bot WhatsApp</h1>
     </div>
-
-    <div class="barra-busca">
-      <input type="text" id="busca" placeholder="Buscar por nome ou número..." />
+    <div class="header-right">
+      <div>Total de Contatos: <span id="total-contatos">0</span></div>
+      <div>Bots Ativos: <span id="bots-ativos">0</span></div>
+      <div>Última Atualização: <span id="hora-atual">--:--:--</span></div>
       <button id="btn-recarregar">🔄</button>
     </div>
+  </header>
 
-    <div class="filtros">
-      <button class="filtro ativo" data-filtro="todos">Todos</button>
-      <button class="filtro" data-filtro="bot">Bot</button>
-      <button class="filtro" data-filtro="humano">Humano</button>
+  <main>
+    <div class="controls">
+      <input type="text" id="busca" placeholder="🔍 Buscar por nome ou número..." />
+      <div class="filtros">
+        <button class="filtro ativo" data-filtro="todos">🗂️ Todos</button>
+        <button class="filtro" data-filtro="bot">✅ Bot Ativo</button>
+        <button class="filtro" data-filtro="humano">❌ Bot Desligado</button>
+      </div>
     </div>
-  </div>
+    <div id="painel" class="grid"></div>
+  </main>
 
-  <!-- Resumo -->
-  <div class="resumo">
-    <span>Total: <strong id="total-contatos">0</strong></span>
-    <span>Bot Ativos: <strong id="bots-ativos">0</strong></span>
-  </div>
-
-  <!-- Painel de Contatos -->
-  <div id="painel" class="painel"></div>
-
-  <script src="app.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
