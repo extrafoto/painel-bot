@@ -30,6 +30,12 @@ function atualizarDashboard(contatos) {
     return emBusca && emFiltro;
   });
 
+  filtrados.sort((a, b) => {
+    const dataA = new Date(a.timestamp_ultima || 0);
+    const dataB = new Date(b.timestamp_ultima || 0);
+    return dataB - dataA; // Ordem decrescente
+  });
+
   filtrados.forEach(c => {
     const card = document.createElement("div");
     card.className = "card";
@@ -39,14 +45,13 @@ function atualizarDashboard(contatos) {
     const modo = c.modo === "bot" ? "bot" : "humano";
     const data = c.timestamp_ultima || "Nunca";
     const mensagem = c.mensagem_ultima || "Sem mensagem";
-    const cidade = c.Cidade || "Sem cidade";
+    const cidade = c.Cidade || "Indefinida";
 
     card.innerHTML = `
       <h3>${nome}</h3>
       <small>📱 ${numero}</small><br>
-      <small>🏙️ ${cidade}</small><br>
+      <div><span>🗺️ ${cidade}</span></div>
       <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
-<br>
       <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
       <div><strong>Modo Atual:</strong> ${modo}</div>
       <div><strong>Última Atualização:</strong> ${data}</div>
@@ -90,10 +95,10 @@ document.querySelectorAll(".filtro").forEach(btn => {
 
 document.getElementById("btn-recarregar").addEventListener("click", () => carregarContatos());
 
+carregarContatos();
+
 // Atualização automática a cada 15 minutos
 setInterval(() => {
-  console.log("Atualização automática executada");
+  console.log("Atualizando automaticamente...");
   carregarContatos();
-}, 15 * 60 * 1000); // 15 minutos em milissegundos
-
-carregarContatos();
+}, 15 * 60 * 1000);
