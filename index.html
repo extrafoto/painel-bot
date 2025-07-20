@@ -1,34 +1,25 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Painel Bot WhatsApp</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Protegido</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <div id="loginModal" class="modal">
     <div class="modal-content">
-      <h2>Login</h2>
-      <input type="password" id="senha" placeholder="Digite a senha"/>
-      <button onclick="validarSenha()">Entrar</button>
-      <p id="mensagemErro" class="erro"></p>
+      <h2>🔒 Acesso Restrito</h2>
+      <input type="password" id="senha" placeholder="Digite a senha" />
+      <button id="btnEntrar">Entrar</button>
     </div>
   </div>
 
-  <div id="painel" class="hidden">
-    <!-- Conteúdo será carregado pelo JS -->
+  <div id="painel" style="display:none;">
+    <h1>✅ Acesso Liberado ao Painel</h1>
+    <p>Este é o conteúdo do painel.</p>
   </div>
 
   <script src="js/login.js"></script>
-  <script src="js/app.js"></script>
 </body>
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <h2>Autenticação</h2>
-    <input type="password" id="senha" placeholder="Digite a senha" />
-    <button id="btnEntrar">Entrar</button>
-  </div>
-</div>
 </html>
