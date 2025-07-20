@@ -89,4 +89,10 @@ document.querySelectorAll(".filtro").forEach(btn => {
 
 document.getElementById("btn-recarregar").addEventListener("click", () => carregarContatos());
 
+// Atualização automática a cada 15 minutos
+setInterval(() => {
+  console.log("Atualização automática executada");
+  carregarContatos();
+}, 15 * 60 * 1000); // 15 minutos em milissegundos
+
 carregarContatos();
