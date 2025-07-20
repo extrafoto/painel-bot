@@ -14,24 +14,34 @@
   </div>
 </div>
 
-<div class="barra-controle">
-  <input type="text" id="busca" placeholder="Buscar por nome ou número..." />
-  <select id="filtro-cidade"></select>
-  <button id="btn-recarregar">🔄</button>
-  <button id="btn-exportar">Exportar CSV</button>
-</div>
+<div class="painel-container">
+  <div class="barra-topo">
+    <div class="ultima-atualizacao">
+      <strong>Última Atualização:</strong> <span id="hora-atual">--:--</span>
+    </div>
+  </div>
 
-<div class="filtros">
-  <button class="filtro ativo" data-filtro="todos">Todos</button>
-  <button class="filtro" data-filtro="bot">Bot</button>
-  <button class="filtro" data-filtro="humano">Humano</button>
-</div>
+  <div class="barra-controle">
+    <input type="text" id="busca" placeholder="🔍 Buscar por nome ou número..." />
+    <select id="filtro-cidade"></select>
+    <button id="btn-recarregar">🔄</button>
+    <button id="btn-exportar">Exportar CSV</button>
+  </div>
 
-<div id="painel"></div>
+  <div class="filtros">
+    <button class="filtro ativo" data-filtro="todos">🗂️ Todos</button>
+    <button class="filtro" data-filtro="bot">✅ Bot Ativo</button>
+    <button class="filtro" data-filtro="humano">❌ Bot Desligado</button>
+  </div>
 
-<div class="resumo">
-  <span>Total: <span id="total-contatos">0</span></span>
-  <span>Bot Ativos: <span id="bots-ativos">0</span></span>
+  <div class="resumo">
+    <span>Total: <span id="total-contatos">0</span></span>
+    <span>Bot Ativos: <span id="bots-ativos">0</span></span>
+  </div>
+
+  <div id="painel"></div>
+
+  <canvas id="grafico-cidades" style="margin-top: 40px; max-width: 100%;"></canvas>
 </div>
 
 <canvas id="grafico-cidades" style="margin-top: 40px; max-width: 100%;"></canvas>
