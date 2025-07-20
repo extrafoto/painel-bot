@@ -1,75 +1,68 @@
+
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Controle do Bot</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel do Bot WhatsApp</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f0f0f0; padding: 20px; }
+    .card {
+      background: white; padding: 15px; margin: 10px 0;
+      border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+    button {
+      padding: 5px 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button.off {
+      background: #dc3545;
+    }
+  </style>
 </head>
-<body class="bg-light">
-  <div class="container py-5">
-    <h2 class="text-center mb-4">💬 Painel de Controle do Bot</h2>
-    <div id="contatos" class="d-flex flex-column gap-3"></div>
-  </div>
+<body>
+  <h1>Painel de Controle do Bot WhatsApp</h1>
+  <div id="painel"></div>
 
   <script>
-    const apiUrl = 'https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48';
-    const webhookUrl = 'https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28';
-
     async function carregarContatos() {
-      try {
-        const res = await fetch(apiUrl);
-        const contatos = await res.json();
+      const res = await fetch("https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48");
+      const dados = await res.json();
+      const painel = document.getElementById("painel");
+      painel.innerHTML = "";
 
-        const container = document.getElementById('contatos');
-        container.innerHTML = '';
-
-        contatos.forEach(contato => {
-          const card = document.createElement('div');
-          card.className = 'card p-3';
-          card.innerHTML = `
-            <h5>${contato.Nome} – ${contato.numero}</h5>
-            <div class="btn-group" role="group">
-              <button class="btn btn-sm btn-success" data-numero="${contato.numero}" data-modo="bot">🤖 Bot Ligado</button>
-              <button class="btn btn-sm btn-danger" data-numero="${contato.numero}" data-modo="OFF">🔇 Bot Desligado</button>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-
-        adicionarListeners();
-      } catch (error) {
-        console.error('Erro ao carregar contatos:', error);
-      }
-    }
-
-    function adicionarListeners() {
-      const botoes = document.querySelectorAll('button[data-numero][data-modo]');
-      botoes.forEach(botao => {
-        botao.addEventListener('click', async () => {
-          const numero = botao.getAttribute('data-numero');
-          const modo = botao.getAttribute('data-modo');
-          try {
-            const resposta = await fetch(webhookUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ numero, modo })
-            });
-            if (resposta.ok) {
-              alert(`Modo atualizado para ${modo.toUpperCase()} para o número ${numero}`);
-            } else {
-              alert('Erro ao atualizar o modo.');
-            }
-          } catch (erro) {
-            alert('Falha na requisição: ' + erro.message);
-          }
-        });
+      dados.forEach(contato => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <strong>${contato.nome || "Sem nome"}</strong><br>
+          Número: ${contato.numero}<br>
+          Modo: <strong>${contato.modo}</strong><br>
+          <button class="${contato.modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${contato.numero}', '${contato.modo}')">
+            ${contato.modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
+          </button>
+        `;
+        painel.appendChild(div);
       });
     }
 
-    carregarContatos();
+    async function alternarModo(numero, modoAtual) {
+      const novoModo = modoAtual === "bot" ? "humano" : "bot";
+
+      await fetch("https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ numero, modo: novoModo })
+      });
+
+      carregarContatos(); // atualiza após mudar
+    }
+
+    carregarContatos(); // inicial
   </script>
 </body>
 </html>
