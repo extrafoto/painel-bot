@@ -1,13 +1,20 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("loginModal");
+  const senhaInput = document.getElementById("senha");
+  const btnEntrar = document.getElementById("btnEntrar");
+  const senhaCorreta = "1234"; // você pode mudar aqui
 
-function validarSenha() {
-  const senha = document.getElementById("senha").value;
-  const painel = document.getElementById("painel");
-  const erro = document.getElementById("mensagemErro");
+  modal.style.display = "flex"; // força o login aparecer
 
-  if (senha === "1234") {
-    document.getElementById("loginModal").style.display = "none";
-    painel.classList.remove("hidden");
-  } else {
-    erro.textContent = "Senha incorreta.";
-  }
-}
+  btnEntrar.addEventListener("click", function () {
+    const senhaDigitada = senhaInput.value;
+
+    if (senhaDigitada === senhaCorreta) {
+      modal.style.display = "none"; // oculta o modal
+      document.body.classList.remove("bloqueado"); // libera o scroll, se tiver
+      carregarPainel(); // CHAMA a função para iniciar o painel
+    } else {
+      alert("Senha incorreta!");
+    }
+  });
+});
