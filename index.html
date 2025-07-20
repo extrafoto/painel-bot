@@ -42,9 +42,21 @@
           <strong>${contato.nome || "Sem nome"}</strong><br>
           Número: ${contato.numero}<br>
           Modo: <strong>${contato.modo}</strong><br>
-          <button class="${contato.modo === 'bot' ? 'off' : ''}" onclick="alternarModo('${contato.numero}', '${contato.modo}')">
-            ${contato.modo === 'bot' ? 'Desligar Bot' : 'Ligar Bot'}
-          </button>
+      <button onclick="setModo('bot', '5521999999999')">🤖 Bot Ligado</button>
+<button onclick="setModo('humano', '5521999999999')">🙋 Bot Desligado</button>
+
+<script>
+  function setModo(modo, numero) {
+    fetch('https://gazeredo.app.n8n.cloud/webhook-test/604b8346-e309-4199-ad53-419ab978fd28', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ numero, modo })
+    })
+    .then(res => res.ok ? alert('Modo atualizado com sucesso!') : alert('Erro ao atualizar modo.'))
+    .catch(err => console.error('Erro na requisição:', err));
+  }
+</script>
+
         `;
         painel.appendChild(div);
       });
