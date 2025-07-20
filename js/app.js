@@ -17,15 +17,14 @@ class WhatsAppBotPanel {
       }
       console.log("Todas as dependências verificadas com sucesso");
     } catch (error) {
-      console.error("Erro na inicialização:", error);
+      console.error("Erro na verificação de dependências:", error);
       throw error;
     }
   }
 
   async initialize() {
     try {
-      await this.checkAPIHealth();
-      await this.loadContacts();
+      await this.loadContacts(); // ✅ REMOVIDO: await this.checkAPIHealth();
       UIManager.initialize();
       console.log("Aplicação inicializada com sucesso!");
     } catch (error) {
@@ -33,33 +32,16 @@ class WhatsAppBotPanel {
     }
   }
 
-  async checkAPIHealth() {
-    console.log("Verificando saúde das APIs...");
-    try {
-      await APIManager.makeRequest(APIManager.BASE_URL);
-      console.log("SheetBest API está respondendo corretamente");
-
-      const webhookResponse = await fetch("https://gazeredo.app.n8n.cloud/webhook/atualizar-modo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ numero: "teste", modo: "bot" })
-      });
-
-      if (!webhookResponse.ok) throw new Error("Webhook não está respondendo corretamente");
-      console.log("Webhook N8N está respondendo corretamente");
-    } catch (error) {
-      console.error("N8N Webhook não está respondendo:", error);
-    }
-  }
-
   async loadContacts() {
     console.log("Carregando contatos...");
-    const contatos = await APIManager.getContacts();
-    console.log(`${contatos.length} contatos carregados com sucesso`);
-    // Aqui você pode integrar a UI se necessário
+    try {
+      const contatos = await APIManager.getContacts();
+      console.log(`${contatos.length} contatos carregados com sucesso`);
+      UIManager.renderContacts(contatos);
+    } catch (error) {
+      console.error("Erro ao carregar contatos:", error);
+    }
   }
 }
 
-new WhatsAppBotPanel();
+new Wh
