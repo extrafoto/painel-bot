@@ -8,6 +8,7 @@ async function carregarContatos() {
     const dados = await res.json();
     contatosGlobais = dados;
     atualizarDashboard(dados);
+    preencherCidades(dados);
   } catch (error) {
     console.error("Erro ao carregar dados:", error);
   }
@@ -23,23 +24,25 @@ function atualizarDashboard(contatos) {
 
   const filtroAtivo = document.querySelector(".filtros .ativo").dataset.filtro;
   const busca = document.getElementById("busca").value.toLowerCase();
+  const cidadeSelecionada = document.getElementById("filtro-cidade").value;
 
   const filtrados = contatos.filter(c => {
     const emBusca = (c.Nome + c.numero).toLowerCase().includes(busca);
     const emFiltro = filtroAtivo === "todos" || c.modo === filtroAtivo;
-    return emBusca && emFiltro;
+    const emCidade = !cidadeSelecionada || c.Cidade === cidadeSelecionada;
+    return emBusca && emFiltro && emCidade;
   });
 
- filtrados.sort((a, b) => {
-  const parseData = (str) => {
-    if (!str || str.toLowerCase() === "nunca") return new Date(0);
-    const [data, hora] = str.split(" ");
-    const [dia, mes, ano] = data.split("/");
-    return new Date(`${ano}-${mes}-${dia}T${hora || "00:00"}`);
-  };
+  filtrados.sort((a, b) => {
+    const parseData = (str) => {
+      if (!str || str.toLowerCase() === "nunca") return new Date(0);
+      const [data, hora] = str.split(" ");
+      const [dia, mes, ano] = data.split("/");
+      return new Date(`${ano}-${mes}-${dia}T${hora || "00:00"}`);
+    };
 
-  return parseData(b.timestamp_ultima) - parseData(a.timestamp_ultima);
-});
+    return parseData(b.timestamp_ultima) - parseData(a.timestamp_ultima);
+  });
 
   filtrados.forEach(c => {
     const card = document.createElement("div");
@@ -70,26 +73,85 @@ function atualizarDashboard(contatos) {
 
   totalContatos.textContent = contatos.length;
   botsAtivos.textContent = contatos.filter(c => c.modo === "bot").length;
-  horaAtual.textContent = new Date().toLocaleTimeString("pt-BR");
+  horaAtual.textContent = new Date().toLocaleString("pt-BR", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+    hour: "2-digit", minute: "2-digit"
+  });
+
+  atualizarGraficoCidades(filtrados);
 }
 
-async function alternarModo(numero, novoModo) {
-  try {
-    const patchUrl = `${SHEET_URL}/numero/${numero}`;
-    await fetch(patchUrl, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ modo: novoModo })
-    });
+function preencherCidades(contatos) {
+  const select = document.getElementById("filtro-cidade");
+  select.innerHTML = '<option value="">Todas as Cidades</option>';
+  const cidades = [...new Set(contatos.map(c => c.Cidade).filter(Boolean))].sort();
+  cidades.forEach(cidade => {
+    const opt = document.createElement("option");
+    opt.value = cidade;
+    opt.textContent = cidade;
+    select.appendChild(opt);
+  });
+}
 
-    await carregarContatos();
-  } catch (error) {
-    console.error("Erro ao alternar modo:", error);
+function atualizarGraficoCidades(contatos) {
+  const ctx = document.getElementById("grafico-cidades").getContext("2d");
+  const contagem = {};
+  contatos.forEach(c => {
+    if (!c.Cidade) return;
+    contagem[c.Cidade] = (contagem[c.Cidade] || 0) + 1;
+  });
+
+  const cidadesOrdenadas = Object.entries(contagem)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 10);
+
+  const labels = cidadesOrdenadas.map(c => c[0]);
+  const data = cidadesOrdenadas.map(c => c[1]);
+
+  if (window.grafico) window.grafico.destroy();
+  window.grafico = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Contatos por Cidade",
+        data,
+        backgroundColor: "#007bff"
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+}
+
+function exportarCSV(contatos) {
+  const cidadeSelecionada = document.getElementById("filtro-cidade").value;
+  const filtrados = contatos.filter(c => !cidadeSelecionada || c.Cidade === cidadeSelecionada);
+
+  if (filtrados.length === 0) {
+    alert("Nenhum contato para exportar.");
+    return;
   }
+
+  const cabecalho = ["Nome", "Número", "Cidade", "Modo", "Mensagem", "Data"];
+  const linhas = filtrados.map(c =>
+    [c.Nome, c.numero, c.Cidade, c.modo, c.mensagem_ultima, c.timestamp_ultima]
+      .map(val => `"${(val || "").replace(/"/g, '""')}"`).join(",")
+  );
+
+  const csvContent = [cabecalho.join(","), ...linhas].join("\n");
+  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.setAttribute("download", `contatos-${cidadeSelecionada || "todas"}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 
 document.getElementById("busca").addEventListener("input", () => atualizarDashboard(contatosGlobais));
-
 document.querySelectorAll(".filtro").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
@@ -97,13 +159,9 @@ document.querySelectorAll(".filtro").forEach(btn => {
     atualizarDashboard(contatosGlobais);
   });
 });
-
 document.getElementById("btn-recarregar").addEventListener("click", () => carregarContatos());
+document.getElementById("btn-exportar").addEventListener("click", () => exportarCSV(contatosGlobais));
+document.getElementById("filtro-cidade").addEventListener("change", () => atualizarDashboard(contatosGlobais));
 
 carregarContatos();
-
-// Atualização automática a cada 15 minutos
-setInterval(() => {
-  console.log("Atualizando automaticamente...");
-  carregarContatos();
-}, 15 * 60 * 1000);
+setInterval(() => carregarContatos(), 15 * 60 * 1000);
