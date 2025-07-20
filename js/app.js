@@ -1,4 +1,3 @@
-
 const SHEET_URL = "https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48";
 
 let contatosGlobais = [];
@@ -39,10 +38,12 @@ function atualizarDashboard(contatos) {
     const numero = c.numero || "Sem número";
     const modo = c.modo === "bot" ? "bot" : "humano";
     const data = c.timestamp_ultima || "Nunca";
+    const mensagem = c.mensagem_ultima || "Sem mensagem";
 
     card.innerHTML = `
       <h3>${nome}</h3>
-      <small>📱 ${numero}</small>
+      <small>📱 ${numero}</small><br>
+      <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
       <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
       <div><strong>Modo Atual:</strong> ${modo}</div>
       <div><strong>Última Atualização:</strong> ${data}</div>
