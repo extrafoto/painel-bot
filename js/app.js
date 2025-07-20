@@ -44,4 +44,5 @@ class WhatsAppBotPanel {
   }
 }
 
-new Wh
+new WhatsAppBotPanel();
+
