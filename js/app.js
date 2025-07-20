@@ -39,10 +39,12 @@ function atualizarDashboard(contatos) {
     const modo = c.modo === "bot" ? "bot" : "humano";
     const data = c.timestamp_ultima || "Nunca";
     const mensagem = c.mensagem_ultima || "Sem mensagem";
+    const cidade = c.Cidade || "Sem cidade";
 
     card.innerHTML = `
       <h3>${nome}</h3>
       <small>📱 ${numero}</small><br>
+      <small>🏙️ ${cidade}</small><br>
       <div class="mensagem"><strong>💬 Última mensagem:</strong> ${mensagem}</div>
       <div class="status ${modo}">${modo === "bot" ? "BOT ATIVO" : "BOT DESLIGADO"}</div>
       <div><strong>Modo Atual:</strong> ${modo}</div>
