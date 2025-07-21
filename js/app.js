@@ -1,26 +1,50 @@
+const SHEET_URL = "https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48";
+let contatosGlobais = [];
+let intervaloAtualizacao = null;
+
+async function carregarContatos() {
+  try {
+    const res = await fetch(SHEET_URL);
+    const dados = await res.json();
+    contatosGlobais = dados;
+    atualizarDashboard(dados);
+    preencherCidades(dados);
+  } catch (error) {
+    console.error("Erro ao carregar dados:", error);
+  }
+}
+
+function preencherCidades(contatos) {
+  const select = document.getElementById("filtro-cidade");
+  if (!select) return;
+  const cidades = [...new Set(contatos.map(c => c.Cidade).filter(Boolean))].sort();
+  select.innerHTML = `<option value="">Todas as cidades</option>` + cidades.map(c => `<option value="${c}">${c}</option>`).join("");
+}
+
 function atualizarDashboard(contatos) {
-  // Elementos
   const painel = document.getElementById("painel");
   const totalContatos = document.getElementById("total-contatos");
   const botsAtivos = document.getElementById("bots-ativos");
   const horaAtual = document.getElementById("hora-atual");
-  const busca = document.getElementById("busca").value.toLowerCase();
+  const busca = document.getElementById("busca")?.value.toLowerCase() || "";
   const filtroAtivo = document.querySelector(".filtro.ativo")?.dataset.filtro || "todos";
-  const cidadeSelecionada = document.getElementById("filtro-cidade").value;
+  const cidadeSelecionada = document.getElementById("filtro-cidade")?.value || "";
   const contatosCidade = document.getElementById("contatos-cidade");
 
   // Filtrar contatos
   const filtrados = contatos.filter(c => {
-    const emBusca = (c.Nome + c.numero).toLowerCase().includes(busca);
+    const emBusca = ((c.Nome || "") + (c.numero || "")).toLowerCase().includes(busca);
     const emFiltro = filtroAtivo === "todos" || c.modo === filtroAtivo;
     const emCidade = !cidadeSelecionada || c.Cidade === cidadeSelecionada;
     return emBusca && emFiltro && emCidade;
   });
 
   // Exibir total de contatos filtrados por cidade
-  contatosCidade.textContent = cidadeSelecionada
-    ? `Contatos em ${cidadeSelecionada}: ${contatos.filter(c => c.Cidade === cidadeSelecionada).length}`
-    : "";
+  if (contatosCidade) {
+    contatosCidade.textContent = cidadeSelecionada
+      ? `Contatos em ${cidadeSelecionada}: ${contatos.filter(c => c.Cidade === cidadeSelecionada).length}`
+      : "";
+  }
 
   // Ordenação por data mais recente
   filtrados.sort((a, b) => {
@@ -64,4 +88,66 @@ function atualizarDashboard(contatos) {
   });
 
   atualizarGraficoCidades(filtrados);
+}
+
+function atualizarGraficoCidades(contatos) {
+  const ctx = document.getElementById('grafico-cidades').getContext('2d');
+  const dadosCidades = {};
+  contatos.forEach(c => {
+    if (!c.Cidade) return;
+    dadosCidades[c.Cidade] = (dadosCidades[c.Cidade] || 0) + 1;
+  });
+  const cidades = Object.keys(dadosCidades);
+  const quantidades = Object.values(dadosCidades);
+
+  if (window.graficoBarraCidades) {
+    window.graficoBarraCidades.data.labels = cidades;
+    window.graficoBarraCidades.data.datasets[0].data = quantidades;
+    window.graficoBarraCidades.update();
+  } else {
+    window.graficoBarraCidades = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: cidades,
+        datasets: [{
+          label: 'Contatos por Cidade',
+          data: quantidades,
+          backgroundColor: 'rgba(0,123,255,0.6)'
+        }]
+      },
+      options: {
+        indexAxis: 'x',
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          x: { beginAtZero: true },
+          y: { beginAtZero: true }
+        }
+      }
+    });
+  }
+}
+
+// Eventos
+document.addEventListener("DOMContentLoaded", () => {
+  carregarContatos();
+  document.getElementById("busca").addEventListener("input", () => atualizarDashboard(contatosGlobais));
+  document.getElementById("filtro-cidade").addEventListener("change", () => atualizarDashboard(contatosGlobais));
+  document.querySelectorAll(".filtro").forEach(btn =>
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".filtro").forEach(b => b.classList.remove("ativo"));
+      this.classList.add("ativo");
+      atualizarDashboard(contatosGlobais);
+    })
+  );
+
+  // Atualização automática a cada 15 minutos
+  intervaloAtualizacao = setInterval(() => carregarContatos(), 15 * 60 * 1000);
+});
+
+// Suporte ao botão de alternância de modo (adicione sua lógica real)
+function alternarModo(numero, novoModo) {
+  alert(`Aqui você poderia chamar um endpoint para alterar o modo do número ${numero} para ${novoModo}.`);
+  // Você pode integrar com SheetBest ou outro backend aqui!
 }
