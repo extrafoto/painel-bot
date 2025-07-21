@@ -80,8 +80,18 @@ body {
   margin: 0 auto 22px auto;
   padding: 18px 14px 12px 14px;
   border-radius: 13px;
-  max-width: 650px;
+  width: 100%;
+  max-width: 100vw;
   box-shadow: 0 4px 12px #0001;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+.grafico-cidade canvas {
+  width: 100% !important;
+  max-width: 100vw !important;
+  min-width: 900px;
+  height: 110px !important;
+  display: block;
 }
 
 #painel {
