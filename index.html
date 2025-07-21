@@ -34,6 +34,32 @@
 
   <div id="painel"></div>
 
+  <!-- Coloque o script aqui -->
+  <script>
+  async function carregarCidades() {
+    try {
+      const response = await fetch('cidades_pe.txt');
+      if (!response.ok) throw new Error("Arquivo de cidades não encontrado");
+      const txt = await response.text();
+      const cidades = txt.split('\n').map(linha => linha.trim()).filter(Boolean);
+
+      const filtroCidade = document.getElementById('filtro-cidade');
+      // Limpa opções antigas (menos a primeira: "Todas as cidades")
+      filtroCidade.innerHTML = '<option value="">Todas as cidades</option>';
+
+      cidades.forEach(cidade => {
+        const option = document.createElement('option');
+        option.value = cidade;
+        option.textContent = cidade;
+        filtroCidade.appendChild(option);
+      });
+    } catch (e) {
+      console.error("Erro ao carregar cidades:", e);
+    }
+  }
+  // Carrega cidades ao iniciar
+  carregarCidades();
+  </script>
   <script src="js/app.js"></script>
 </body>
 </html>
