@@ -85,13 +85,14 @@ body {
 }
 
 #painel {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 10px 14px 30px 14px;
+  width: 100%;
+  margin: 0;
+  padding: 10px 2vw 30px 2vw;
   display: flex;
   flex-wrap: wrap;
-  gap: 18px;
+  gap: 24px 14px; /* mais espaçamento horizontal */
   justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 .card {
