@@ -90,6 +90,25 @@ function atualizarDashboard(contatos) {
   atualizarGraficoCidades(filtrados);
 }
 
+async function alternarModo(numero, novoModo) {
+  try {
+    const url = `https://api.sheetbest.com/sheets/ec6ca1f8-de13-4cad-a4b1-1e1919ff5d48/numero/${numero}`;
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ modo: novoModo })
+    });
+    if (!response.ok) throw new Error("Erro ao atualizar modo");
+    // Atualiza a tela após mudança
+    carregarContatos();
+  } catch (e) {
+    alert("Falha ao atualizar o modo do bot!");
+    console.error(e);
+  }
+}
+
 function atualizarGraficoCidades(contatos) {
   const ctx = document.getElementById('grafico-cidades').getContext('2d');
   const dadosCidades = {};
@@ -145,9 +164,3 @@ document.addEventListener("DOMContentLoaded", () => {
   // Atualização automática a cada 15 minutos
   intervaloAtualizacao = setInterval(() => carregarContatos(), 15 * 60 * 1000);
 });
-
-// Suporte ao botão de alternância de modo (adicione sua lógica real)
-function alternarModo(numero, novoModo) {
-  alert(`Aqui você poderia chamar um endpoint para alterar o modo do número ${numero} para ${novoModo}.`);
-  // Você pode integrar com SheetBest ou outro backend aqui!
-}
