@@ -100,6 +100,16 @@ function atualizarGraficoCidades(contatos) {
     if (!c.Cidade) return;
     contagem[c.Cidade] = (contagem[c.Cidade] || 0) + 1;
   });
+function atualizarDashboard(contatos) {
+  // ...
+  const cidadeSelecionada = document.getElementById("filtro-cidade").value;
+  // Filtrados é o array filtrado já usado nos cards
+  document.getElementById("contatos-cidade").textContent =
+    cidadeSelecionada
+      ? `Contatos em ${cidadeSelecionada}: ${filtrados.length}`
+      : "";
+  // ...
+}
 
   const cidadesOrdenadas = Object.entries(contagem)
     .sort((a, b) => b[1] - a[1])
