@@ -1,0 +1,1 @@
+[  "Recife", "Olinda", "Caruaru", "Petrolina", "Garanhuns", "Serra Talhada", "Arcoverde", "Palmares", "Vitória de Santo Antão", "Salgueiro", "Goiana", "Cabo de Santo Agostinho", "Igarassu", "Paulista", "Jaboatão dos Guararapes" ]
