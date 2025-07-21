@@ -175,31 +175,28 @@ body {
 
 /* Responsivo para mobile */
 @media (max-width: 720px) {
-  .top-controls,
-  .grafico-cidade {
+  .top-controls {
     flex-direction: column;
     align-items: stretch;
-    padding: 12px 8px;
+    padding: 6px 4vw 0 4vw;
+    gap: 0;
+  }
+  .esquerda {
+    margin-bottom: 0; /* Remove espaço extra */
+    padding-bottom: 0;
+    font-size: 1.01rem;
   }
   .busca-cidade {
     flex-direction: column;
     align-items: stretch;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 0;   /* Remove espaço extra */
+    padding-bottom: 0;
   }
-  .grafico-cidade {
-    width: 100% !important;
-    max-width: 100vw;
-    min-width: 0;
-    box-sizing: border-box;
-    padding-left: 2vw;
-    padding-right: 2vw;
-  }
-  .grafico-cidade canvas {
-    width: 100% !important;
-    max-width: 100vw;
-    min-width: 0;
-    height: 120px !important;
-    display: block;
+  #busca, #filtro-cidade {
+    width: 100%;
+    margin-bottom: 4px;
+    font-size: 1.05em;
   }
 }
+
