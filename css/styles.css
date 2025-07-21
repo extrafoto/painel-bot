@@ -182,12 +182,11 @@ body {
     gap: 0;
     margin-bottom: 0 !important;
   }
-  .esquerda {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-    margin-top: 0 !important;
-    padding-top: 0 !important;
-  }
+.esquerda {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
   .busca-cidade {
     flex-direction: column;
     align-items: stretch;
