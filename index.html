@@ -1,87 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel de Contatos</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-      background: #f5f5f5;
-    }
-
-    h1 {
-      margin-bottom: 16px;
-    }
-
-    .topbar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-
-    button {
-      padding: 8px 14px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .reload {
-      background: #222;
-      color: white;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      background: #222;
-      color: white;
-    }
-
-    tr:nth-child(even) {
-      background: #fafafa;
-    }
-
-    .modo-bot {
-      color: green;
-      font-weight: bold;
-    }
-
-    .modo-humano {
-      color: #c0392b;
-      font-weight: bold;
-    }
-
-    .status {
-      margin-bottom: 12px;
-      color: #555;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Teste Tabela</title>
 </head>
 <body>
-  <h1>Contatos do Baserow</h1>
-
-  <div class="topbar">
-    <button class="reload" onclick="carregarDados()">Atualizar</button>
-  </div>
-
-  <div class="status" id="status">Carregando...</div>
-
-  <table>
+  <h1>Teste</h1>
+  <div id="status">Carregando...</div>
+  <table border="1" cellpadding="6">
     <thead>
       <tr>
         <th>ID</th>
@@ -94,64 +20,52 @@
         <th>Timestamp</th>
       </tr>
     </thead>
-    <tbody id="tabela-body"></tbody>
+    <tbody id="tbody"></tbody>
   </table>
 
   <script>
-    const URL_DADOS = "https://services-n8n.8a8cte.easypanel.host/webhook/5fc03444-b63a-44f4-8f68-3df56d16d5b0";
+    const URL = "COLE_AQUI_A_URL_DO_WEBHOOK_JSON";
 
-    async function carregarDados() {
+    async function carregar() {
       const status = document.getElementById("status");
-      const tbody = document.getElementById("tabela-body");
-
-      status.textContent = "Carregando dados...";
-      tbody.innerHTML = "";
+      const tbody = document.getElementById("tbody");
 
       try {
-        const response = await fetch(URL_DADOS);
-        if (!response.ok) {
-          throw new Error("Erro HTTP: " + response.status);
-        }
+        const res = await fetch(URL);
+        const dados = await res.json();
 
-        const dados = await response.json();
+        console.log("RESPOSTA:", dados);
+
+        tbody.innerHTML = "";
 
         if (!Array.isArray(dados)) {
-          throw new Error("A resposta não veio como lista.");
-        }
-
-        if (dados.length === 0) {
-          status.textContent = "Nenhum registro encontrado.";
+          status.textContent = "Resposta não é array";
           return;
         }
 
+        status.textContent = "Total de registros: " + dados.length;
+
         dados.forEach(item => {
           const tr = document.createElement("tr");
-
-          const modoClasse = item.modo === "humano" ? "modo-humano" : "modo-bot";
-
           tr.innerHTML = `
             <td>${item.id ?? ""}</td>
             <td>${item.nome ?? ""}</td>
             <td>${item.numero ?? ""}</td>
             <td>${item.cidade ?? ""}</td>
             <td>${item.mensagem ?? ""}</td>
-            <td class="${modoClasse}">${item.modo ?? ""}</td>
+            <td>${item.modo ?? ""}</td>
             <td>${item.interactions ?? ""}</td>
             <td>${item.timestamp_ultima ?? ""}</td>
           `;
-
           tbody.appendChild(tr);
         });
-
-        status.textContent = `Total de registros: ${dados.length}`;
-      } catch (error) {
-        console.error(error);
-        status.textContent = "Erro ao carregar dados: " + error.message;
+      } catch (e) {
+        console.error(e);
+        status.textContent = "Erro: " + e.message;
       }
     }
 
-    carregarDados();
-    setInterval(carregarDados, 10000);
+    carregar();
   </script>
 </body>
 </html>
