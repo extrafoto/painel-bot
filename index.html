@@ -1,13 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Teste Tabela</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel Bot</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f5f5f5;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    .topbar {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #222;
+      color: white;
+    }
+
+    .status {
+      margin-bottom: 10px;
+      color: #555;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: #222;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .modo-bot {
+      color: green;
+      font-weight: bold;
+    }
+
+    .modo-humano {
+      color: #c0392b;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Teste</h1>
-  <div id="status">Carregando...</div>
-  <table border="1" cellpadding="6">
+
+  <h1>Painel do Bot</h1>
+
+  <div class="topbar">
+    <button onclick="carregarTudo()">Atualizar</button>
+  </div>
+
+  <!-- CONTATOS -->
+  <h2>Contatos</h2>
+  <div class="status" id="status-contatos">Carregando...</div>
+
+  <table>
     <thead>
       <tr>
         <th>ID</th>
@@ -20,52 +100,102 @@
         <th>Timestamp</th>
       </tr>
     </thead>
-    <tbody id="tbody"></tbody>
+    <tbody id="tabela-contatos"></tbody>
+  </table>
+
+  <!-- FOLLOW-UP -->
+  <h2>Follow-up</h2>
+  <div class="status" id="status-followup">Carregando...</div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+        <th>Número</th>
+        <th>Cidade</th>
+        <th>Mensagem</th>
+        <th>Modo</th>
+        <th>Interactions</th>
+        <th>Timestamp</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-followup"></tbody>
   </table>
 
   <script>
-    const URL = "COLE_AQUI_A_URL_DO_WEBHOOK_JSON";
+    // 🔗 URLs dos webhooks (AJUSTE SE PRECISAR)
+    const URL_CONTATOS = "https://services-n8n.8a8cte.easypanel.host/webhook/5fc03444-b63a-44f4-8f68-3df56d16d5b0";
+    const URL_FOLLOWUP = "https://services-n8n.8a8cte.easypanel.host/webhook/lista-followup-702";
 
-    async function carregar() {
-      const status = document.getElementById("status");
-      const tbody = document.getElementById("tbody");
+    async function carregarTabela(url, tbodyId, statusId) {
+      const status = document.getElementById(statusId);
+      const tbody = document.getElementById(tbodyId);
+
+      status.textContent = "Carregando...";
+      tbody.innerHTML = "";
 
       try {
-        const res = await fetch(URL);
-        const dados = await res.json();
+        const response = await fetch(url);
 
-        console.log("RESPOSTA:", dados);
+        if (!response.ok) {
+          throw new Error("Erro HTTP: " + response.status);
+        }
 
-        tbody.innerHTML = "";
+        const dados = await response.json();
+
+        console.log("Dados recebidos:", dados);
 
         if (!Array.isArray(dados)) {
-          status.textContent = "Resposta não é array";
+          throw new Error("Resposta não é array");
+        }
+
+        if (dados.length === 0) {
+          status.textContent = "Nenhum registro encontrado";
           return;
         }
 
-        status.textContent = "Total de registros: " + dados.length;
-
         dados.forEach(item => {
           const tr = document.createElement("tr");
+
+          const modoClasse =
+            item.modo === "humano"
+              ? "modo-humano"
+              : "modo-bot";
+
           tr.innerHTML = `
             <td>${item.id ?? ""}</td>
             <td>${item.nome ?? ""}</td>
             <td>${item.numero ?? ""}</td>
             <td>${item.cidade ?? ""}</td>
             <td>${item.mensagem ?? ""}</td>
-            <td>${item.modo ?? ""}</td>
+            <td class="${modoClasse}">${item.modo ?? ""}</td>
             <td>${item.interactions ?? ""}</td>
             <td>${item.timestamp_ultima ?? ""}</td>
           `;
+
           tbody.appendChild(tr);
         });
-      } catch (e) {
-        console.error(e);
-        status.textContent = "Erro: " + e.message;
+
+        status.textContent = "Total de registros: " + dados.length;
+
+      } catch (error) {
+        console.error(error);
+        status.textContent = "Erro: " + error.message;
       }
     }
 
-    carregar();
+    function carregarTudo() {
+      carregarTabela(URL_CONTATOS, "tabela-contatos", "status-contatos");
+      carregarTabela(URL_FOLLOWUP, "tabela-followup", "status-followup");
+    }
+
+    // carrega ao abrir
+    carregarTudo();
+
+    // atualiza automaticamente a cada 10s
+    setInterval(carregarTudo, 10000);
   </script>
+
 </body>
 </html>
